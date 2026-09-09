@@ -1203,8 +1203,12 @@ function applyPastedNames(){
   var d = currentTrip.data||{};
   var existingCount = parseInt(d['XNumStudents'])||0;
   if(isNaN(existingCount)) existingCount = 0;
-  names.forEach(function(n,i){ d['XstudentName'+(existingCount+i+1)]=n; });
-  d['XNumStudents'] = existingCount + names.length;
+  // Fill from row 1 (overwriting any empty placeholder rows already created
+  // by "Number of Students"), rather than appending after existingCount —
+  // appending after was leaving the pre-created rows blank and pasting the
+  // names below them instead of into them.
+  names.forEach(function(n,i){ d['XstudentName'+(i+1)]=n; });
+  d['XNumStudents'] = Math.max(existingCount, names.length);
   currentTrip.data = d;
   var countEl = document.getElementById('field_XNumStudents');
   if(countEl){ countEl.value = d['XNumStudents']; }
