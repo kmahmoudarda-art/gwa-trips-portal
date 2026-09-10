@@ -25371,7 +25371,7 @@ async function generateDocx() {
  const checklistRows = checklist.map(item => new TableRow({
  children: [
  dataCell(item.label, 7488),
- dataCell(item.checked ? '' : '', 1872, { center: true }),
+ dataCell(item.checked ? '✓' : '', 1872, { center: true, bold: true }),
  ]
  }));
 
@@ -25554,41 +25554,6 @@ async function generateDocx() {
  }),
  new Paragraph({ spacing: { after: 140 } }),
 
-
- // Table PR: PR & Communications
- new Table({
- width: { size: tblW, type: WidthType.DXA },
- columnWidths: [9360],
- rows: [
- new TableRow({ children: [headerCell('PR & Communications', 9360)] }),
- new TableRow({
- children: [new TableCell({
- width: { size: 9360, type: WidthType.DXA },
- borders: cellBorder,
- margins: { top: 100, bottom: 100, left: 140, right: 140 },
- children: [
- new Paragraph({ children: [new TextRun({ text: 'Social Media & Photos', bold: true, font: 'Arial', size: 20, color: '1F3864' })] }),
- new Paragraph({ children: [new TextRun({ text: `Social Media Label: ${val('prSocialLabel') || '—'}`, font: 'Arial', size: 20 })] }),
- new Paragraph({ children: [new TextRun({ text: `Social Media Link: ${val('prSocialUrl') || '—'}`, font: 'Arial', size: 20 })] }),
- new Paragraph({ children: [new TextRun({ text: `Photos Link: ${val('prPhotosUrl') || '—'}`, font: 'Arial', size: 20 })] }),
- new Paragraph({ spacing: { after: 80 } }),
- new Paragraph({ children: [new TextRun({ text: `Photographer Needed: ${document.querySelector('input[name="photographerNeeded"]:checked')?.value || 'No'}`, font: 'Arial', size: 20 })] }),
- new Paragraph({ children: [new TextRun({ text: `Big Screen Slide / Poster Needed: ${document.querySelector('input[name="bigScreen"]:checked')?.value || 'No'}`, font: 'Arial', size: 20 })] }),
- new Paragraph({ spacing: { after: 80 } }),
- new Paragraph({ children: [new TextRun({ text: `Purchasing Items: ${document.querySelector('input[name="purchasingItems"]:checked')?.value || 'No'}`, font: 'Arial', size: 20 })] }),
- ...(document.querySelector('input[name="purchasingItems"]:checked')?.value === 'Yes' ? [
- new Paragraph({ children: [new TextRun({ text: `Items to Purchase: ${val('purchaseItemsList') || '—'}`, font: 'Arial', size: 20 })] }),
- new Paragraph({ children: [new TextRun({ text: `PO Notes: ${val('purchasePONotes') || '—'}`, font: 'Arial', size: 20 })] }),
- ] : []),
- new Paragraph({ spacing: { after: 80 } }),
- new Paragraph({ children: [new TextRun({ text: 'Catering Requirements:', bold: true, font: 'Arial', size: 20, color: '1F3864' })] }),
- new Paragraph({ children: [new TextRun({ text: val('cateringRequirements') || '—', font: 'Arial', size: 20 })] }),
- ]
- })]
- })
- ]
- }),
- new Paragraph({ spacing: { after: 140 } }),
 
  // Table 6: Notes
  new Table({
