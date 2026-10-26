@@ -1133,7 +1133,7 @@ function buildStudentList(){
  + fld('Xteacher2','Second Teacher','text','Name')
  + '<div class="field"><label>Number of Students</label>'
  + '<div style="display:flex;gap:8px;align-items:center;">'
- + '<input type="number" id="field_XNumStudents" placeholder="e.g. 25" min="1" max="100" oninput="scheduleAutoSave();rebuildStudentRows()" style="width:100px"/>'
+ + '<input type="number" id="field_XNumStudents" placeholder="e.g. 25" min="1" max="250" oninput="scheduleAutoSave();rebuildStudentRows()" style="width:100px"/>'
  + '<button class="btn btn-ghost" style="font-size:12px;padding:6px 12px;" onclick="rebuildStudentRows()">Apply</button>'
  + '</div></div>'
  + '</div></div>'
@@ -1189,7 +1189,7 @@ function rebuildStudentRows(){
  var tbody = document.getElementById('studentRowsTbody');
  if(!el||!tbody) return;
  var count = parseInt(el.value)||5;
- if(count<1) count=1; if(count>100) count=100;
+ if(count<1) count=1; if(count>250) count=250;
  tbody.innerHTML = buildStudentRows(count);
 }
 
@@ -1461,7 +1461,7 @@ function toggleEVCheck(key, checked){
 function buildClinicClearance(){
  var data = currentTrip ? (currentTrip.data||{}) : {};
  var count = parseInt(data['XNumStudents'])||5;
- if(count<1) count=1; if(count>100) count=100;
+ if(count<1) count=1; if(count>250) count=250;
  var rows = '';
  for(var n=1;n<=count;n++){
  var name = data['XstudentName'+n]||'';
