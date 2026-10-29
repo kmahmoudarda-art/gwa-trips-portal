@@ -960,7 +960,9 @@ function renderDashboard(){
  '<span class="progress-badge '+bc+'">'+bt+'</span>',
  '<div class="form-card-actions" onclick="event.stopPropagation()">',
  '<button class="btn btn-ghost" onclick="openForm(\''+f.id+'\')">Edit</button>',
- '<button class="btn btn-primary" onclick="downloadForm(\''+f.id+'\')"> Download</button>',
+ (f.id==='khda_form'
+  ? '<button class="btn btn-primary" onclick="copyKHDAText()">📋 Copy</button>'
+  : '<button class="btn btn-primary" onclick="downloadForm(\''+f.id+'\')"> Download</button>'),
  '</div>',
  '</div>'
  ].join('');
@@ -1265,16 +1267,17 @@ function buildKHDAForm(){
  + fld('XKhdaActivity','Name of Activity','text','Full activity name')
  + fld('XTripName','Trip / Event Name','text','e.g. Design in a Box')
  + fld('XDestination','Destination / Venue','text','e.g. Dubai Design District')
- + fld('XDate','Date of Activity','text','e.g. 15 June 2025')
+ + fld('XDate','Date of Activity','text','e.g. 30 October 2026')
+ + fld('XKhdaEndDate','End Date of Activity','text','e.g. 30 November 2026')
  + fld('XDuration','Duration','text','e.g. 6 hours / 1 day')
- + fldSel('XKhdaTiming','Timing',['During school hours','After school hours'])
+ + fld('XKhdaTiming','Timing','text','e.g. All day for one month 30 October - 30 November')
  + '</div></div>'
  + '<div class="form-section"><h4>School & Students</h4><div class="field-grid">'
  + fld('XKhdaSchool','School Name','text','GEMS World Academy Dubai')
  + fld('XGrade','Grades Participating','text','e.g. Grade 9-11')
  + fld('XNumStudents','Number of Students','number','25')
- + fldSel('XKhdaFee','Fee',['Free','Applicable'])
- + fldSel('XKhdaProvider','Provided By',['School','Third Party'])
+ + fldSel('XKhdaFee','Fee',['N/A','Free','Applicable'])
+ + fldSel('XKhdaProvider','Provided By',['School','Third party','School/third party'])
  + fld('XKhdaThirdParty','Third Party Details (if applicable)','text','Trade license / KHDA permit no.')
  + '</div></div>'
  + '<div class="form-section"><h4>Description</h4>'
@@ -1288,13 +1291,42 @@ function buildKHDAForm(){
  + fld('XLeadEmail','Contact Email','email','teacher@gemsedu.com')
  + '</div></div>'
  + '<div class="form-section" style="background:#fff8e6;border-color:#f0c040;">'
- + '<h4 style="color:#8a6000;"> After Filling: Download &amp; Re-upload</h4>'
- + '<p style="font-size:13px;color:#5a4000;margin-bottom:12px;">Download this form as a text file, get KHDA approval, then upload the approved document below.</p>'
+ + '<h4 style="color:#8a6000;"> After Filling: Copy &amp; Re-upload</h4>'
+ + '<p style="font-size:13px;color:#5a4000;margin-bottom:12px;">Copy the details as plain text, send them for KHDA approval, then upload the approved document below.</p>'
+ + '<button type="button" class="btn btn-primary" style="margin-bottom:12px;" onclick="copyKHDAText()">📋 Copy KHDA Details</button>'
  + '<div class="upload-zone" onclick="document.getElementById(\'khdaFormUpload\').click()" style="margin-top:0;">'
  + '<input type="file" id="khdaFormUpload" accept=".pdf,.docx,.doc,.jpg,.png" onchange="uploadKHDAForm(this)"/>'
  + '<div class="icon" style="font-size:32px;color:#8FAADC;margin-bottom:8px;">&#8682;</div>'
  + '<p id="khdaFormStatus">Click to upload signed/approved KHDA document</p>'
  + '</div></div>';
+}
+
+function copyKHDAText(){
+ // Pick up unsaved edits if the KHDA form is open
+ document.querySelectorAll('[id^="field_"]').forEach(function(el){
+  if(currentTrip && currentTrip.data) currentTrip.data[el.id.slice(6)] = el.value;
+ });
+ var d = (currentTrip && currentTrip.data) || {};
+ function v(k){ return (d[k]||'').trim(); }
+ var text = [
+  'Name of activity: '+(v('XKhdaActivity')||v('XTripName')),
+  'Timing: '+v('XKhdaTiming'),
+  'Provided by: '+v('XKhdaProvider'),
+  'Date of activity: '+v('XDate'),
+  'End date of activity: '+v('XKhdaEndDate'),
+  'Brief description: '+v('XKhdaDesc'),
+  'Grades participating: '+v('XGrade'),
+  'Fee: '+v('XKhdaFee')
+ ].join('\n');
+ function done(){ showToast('KHDA details copied to clipboard'); }
+ function fallback(){
+  var ta = document.createElement('textarea');
+  ta.value = text; document.body.appendChild(ta); ta.select();
+  try { document.execCommand('copy'); done(); } catch(e){ showToast('Copy failed'); }
+  document.body.removeChild(ta);
+ }
+ if(navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, fallback);
+ else fallback();
 }
 
 function uploadKHDAForm(input){
